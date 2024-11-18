@@ -3,30 +3,94 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define TAMANHO 2
+#define TAMANHO_FRASE 100
+
+
 void escolha(char valor[], char arquivo[]);
 void lerArquivo(char arquivo[]);
 void exibirAjuda();
+bool todosIguais(int matriz[][TAMANHO], int linha, int coluna);
+void dividir(int matriz[][TAMANHO], int linha, int coluna, char frase[]);
+void colocaLetra(int matriz[][TAMANHO], char frase[]);
 
-#define TAMANHO 25
 
 int main(int argc, char **argv){
 
+    /*
     char argumento[TAMANHO];
     char nomeArquivo[TAMANHO];
     strcpy(argumento, argv[1]);
     strcpy(nomeArquivo, argv[2]);
     
-
     escolha(argumento, nomeArquivo);
+    */
+
+   // Teste
+    int matriz[2][2];
+
+    for (int i = 0; i < 2; i++){
+        printf("Linha %d\n", i+1);
+
+        for (int j = 0; j < 2; j++){
+            scanf("%d", &matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    int linha = 2;
+    int coluna = 2;
+
+    char frase[TAMANHO_FRASE] = "";
+
+    dividir(matriz, linha, coluna, frase);
+    printf("%s", frase);
     
     return 0;
 }
 
-/*
-bool todosIguais(int matriz[][], int linha, int coluna){
-    
+void dividir(int matriz[][TAMANHO], int linha, int coluna, char frase[]){
+    char letra[2] = "X\0";
+    strcat(frase, letra);
+
+    if (todosIguais(matriz, linha, coluna)){
+        colocaLetra(matriz, frase);
+        return;
+    }
+
+    /*
+    char = dividir(matriz[/2], tamanho/2);
+    char = dividir()
+    char =
+    char
+    */
 }
-*/
+
+
+bool todosIguais(int matriz[][TAMANHO], int linha, int coluna){
+    int cor = matriz[0][0];
+    for (int i = 0; i < linha; i++){
+        for (int j = 0; j < coluna; j++){
+            if (cor != matriz[i][j]) return false;
+        }
+        
+    }
+    return true;
+}
+
+void colocaLetra(int matriz[][TAMANHO], char frase[]){
+    char letra[2];
+    if (matriz[0][0] == 0){
+        letra[0] = 'B';
+    }
+    else{
+        letra[0] = 'P';
+    }
+    
+    letra[1] = '\0';
+
+    strcat(frase, letra);
+}
 
 void lerArquivo(char arquivo[]) {
     FILE *arquivosaida = fopen(arquivo, "r");
