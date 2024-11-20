@@ -3,87 +3,121 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define TAMANHO 2
+#define TAMANHO 3
 #define TAMANHO_FRASE 100
 
 
 void escolha(char valor[], char arquivo[]);
 void lerArquivo(char arquivo[]);
 void exibirAjuda();
-bool todosIguais(int matriz[][TAMANHO], int linha, int coluna);
-void dividir(int matriz[][TAMANHO], int linha, int coluna, char frase[]);
-void colocaLetra(int matriz[][TAMANHO], char frase[]);
-
+bool todosIguais(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna);
+void dividir(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]);
+void colocaLetra(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, char frase[]);
 
 int main(int argc, char **argv){
 
-    /*
-    char argumento[TAMANHO];
-    char nomeArquivo[TAMANHO];
-    strcpy(argumento, argv[1]);
-    strcpy(nomeArquivo, argv[2]);
-    
-    escolha(argumento, nomeArquivo);
-    */
-
    // Teste
-    int matriz[2][2];
+    int matriz[3][TAMANHO];
 
-    for (int i = 0; i < 2; i++){
-        printf("Linha %d\n", i+1);
-
-        for (int j = 0; j < 2; j++){
+    for (int i = 0; i < 3; i++){
+        for (int j = 0; j < TAMANHO; j++){
             scanf("%d", &matriz[i][j]);
         }
         printf("\n");
     }
 
-    int linha = 2;
-    int coluna = 2;
-
+    int linha = 3;
+    int coluna = TAMANHO;
     char frase[TAMANHO_FRASE] = "";
 
-    dividir(matriz, linha, coluna, frase);
+    dividir(matriz, 0, 0, linha, coluna, frase);
     printf("%s", frase);
     
     return 0;
 }
 
-void dividir(int matriz[][TAMANHO], int linha, int coluna, char frase[]){
-    char letra[2] = "X\0";
-    strcat(frase, letra);
+void dividir(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]){
 
-    if (todosIguais(matriz, linha, coluna)){
-        colocaLetra(matriz, frase);
+    if (todosIguais(matriz, inicioLinha, inicioColuna, finalLinha, finalColuna)){
+        colocaLetra(matriz,inicioLinha, inicioColuna, frase);
         return;
     }
 
-    /*
-    char = dividir(matriz[/2], tamanho/2);
-    char = dividir()
-    char =
-    char
-    */
+    char letra[2] = "X\0";
+    strcat(frase, letra);
+
+    int divisaoInicioLinha;
+    int divisaoInicioColuna;
+
+    int divisaoFinalLinha;
+    int divisaoFinalColuna;
+
+    //Quadrante 1
+    divisaoInicioLinha = inicioLinha;
+    divisaoFinalLinha = (finalLinha % 2 == 0) ? finalLinha/2: finalLinha/2 + 1;
+    divisaoInicioColuna = inicioColuna;
+    divisaoFinalColuna = (finalColuna % 2 == 0) ? finalColuna/2: finalColuna/2 + 1;
+    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
+    
+    //Quadrante 2
+    divisaoInicioLinha = inicioLinha;
+    divisaoFinalLinha = (finalLinha % 2 == 0) ? finalLinha/2: finalLinha/2+1;
+    divisaoInicioColuna = (finalColuna % 2 == 0) ? finalColuna/2: finalColuna/2 + 1;
+    divisaoFinalColuna = finalColuna;
+    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
+
+    //Quadrante 3
+    divisaoInicioLinha = (finalLinha % 2 == 0) ? finalLinha/2 : finalLinha/2 + 1;
+    divisaoFinalLinha = finalLinha;
+    divisaoInicioColuna = inicioColuna;
+    divisaoFinalColuna = (finalColuna % 2 == 0) ? finalColuna/2: finalColuna/ 2 + 1;
+    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
+
+    //Quadrante 4
+    divisaoInicioLinha = (finalLinha % 2 == 0) ? finalLinha/2: finalLinha/2 + 1;
+    divisaoFinalLinha = finalLinha;
+    divisaoInicioColuna = (finalColuna % 2 == 0) ? finalColuna / 2: finalColuna/2 + 1;
+    divisaoFinalColuna = finalColuna;
+    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
 }
 
 
-bool todosIguais(int matriz[][TAMANHO], int linha, int coluna){
-    int cor = matriz[0][0];
-    for (int i = 0; i < linha; i++){
-        for (int j = 0; j < coluna; j++){
-            if (cor != matriz[i][j]) return false;
+bool todosIguais(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna){
+    if (inicioColuna == finalColuna && inicioLinha == finalLinha) return true;
+    
+    int cor;
+    cor = matriz[inicioLinha][inicioColuna];
+
+    if (inicioLinha == finalLinha && inicioLinha + 1 == finalLinha){
+        for (int i = inicioColuna; i < finalColuna; i++){
+            if (cor != matriz[inicioColuna][i]) return false;
+        }
+        return true;
+    }
+    if (inicioColuna == finalColuna && inicioColuna + 1 == finalColuna){
+        for (int i = inicioLinha; i < finalLinha; i++){
+            if (cor != matriz[i][inicioColuna]) return false;
+        }
+        return true;
+    }
+    
+
+    for (int i = inicioLinha; i < finalLinha; i++){
+        for (int j = inicioColuna; j < finalColuna; j++){
+            if (cor != matriz[i][j]) 
+                return false; 
         }
         
     }
     return true;
 }
 
-void colocaLetra(int matriz[][TAMANHO], char frase[]){
+void colocaLetra(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, char frase[]){
     char letra[2];
-    if (matriz[0][0] == 0){
+    if (matriz[inicioLinha][inicioColuna] == 0){
         letra[0] = 'B';
     }
-    else{
+    else if (matriz[inicioLinha][inicioColuna] == 1){
         letra[0] = 'P';
     }
     
