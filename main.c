@@ -34,65 +34,43 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+//Divide a matriz em 4 quadrantes
 void dividir(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]) {
-
+    
+    //Caso-base para sair da recursão
     if (todosIguais(matriz, inicioLinha, inicioColuna, finalLinha, finalColuna)) {
         colocaLetra(matriz, inicioLinha, inicioColuna, frase);
         return;
     }
-
+    
+    //Adiciona a letra X à frase, caso seja necessário realizar uma divisão
     char letra[2] = "X\0";
     strcat(frase, letra);
 
+    //Valor do central da coluna
     int centroColuna = retornaCentro(inicioColuna, finalColuna);
-    printf("Centro coluna: %d\n", centroColuna);
 
+    //Valor central da linha
     int centroLinha = retornaCentro(inicioLinha, finalLinha);
-    printf("Centro linha: %d\n", centroLinha);
 
     // Quadrante 1
-    printf("Quadrante 1:\n");
-    for (int i = inicioLinha; i < centroLinha; i++) {
-        for (int j = inicioColuna; j < centroColuna; j++) {
-            printf("%d ", matriz[i][j]);
-        }
-        printf("\n");
-    }
     dividir(matriz, inicioLinha, inicioColuna, centroLinha, centroColuna, frase);
 
     // Quadrante 2
-    printf("Quadrante 2: \n");
-    for (int i = inicioLinha; i < centroLinha; i++) {
-        for (int j = centroColuna; j < finalColuna; j++) {
-            printf("%d ", matriz[i][j]);
-        }
-        printf("\n");
-    }
     dividir(matriz, inicioLinha, centroColuna, centroLinha, finalColuna, frase);
 
+    //Se tivermos que dividir um vetor, teremos uma repetição dos quadrantes 3 e 4.
+    //A condição serve para ignorar isso 
     if (centroLinha != finalLinha) {
         // Quadrante 3
-        printf("Quadrante 3: \n");
-        for (int i = centroLinha; i < finalLinha; i++) {
-            for (int j = inicioColuna; j < centroColuna; j++) {
-                printf("%d ", matriz[i][j]);
-            }
-            printf("\n");
-        }
         dividir(matriz, centroLinha, inicioColuna, finalLinha, centroColuna, frase);
 
         // Quadrante 4
-        printf("Quadrante 4: \n");
-        for (int i = centroLinha; i < finalLinha; i++) {
-            for (int j = centroColuna; j < finalColuna; j++) {
-                printf("%d ", matriz[i][j]);
-            }
-            printf("\n");
-        }
         dividir(matriz, centroLinha, centroColuna, finalLinha, finalColuna, frase);
     }
 }
 
+//Função que pega a letra presente no quadrante e coloca na frase principal
 void colocaLetra(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, char frase[]) {
     char letra[2];
     if (matriz[inicioLinha][inicioColuna] == 0) {
@@ -197,6 +175,7 @@ void escolha(char valor[], char arquivo[]) {
     }
 }
 
+//Função que verifica se todos os elementos da matriz são iguais. Retorna verdadeiro ou falso
 bool todosIguais(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna) {
     if (inicioColuna == finalColuna && inicioLinha == finalLinha) return true;
 
@@ -226,6 +205,7 @@ bool todosIguais(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inici
     return true;
 }
 
+//Função que faz a divisão da linha ou coluna
 int retornaCentro(int inicio, int final) {
     if ((inicio + final) % 2 == 0) {
         return (inicio + final) / 2;
