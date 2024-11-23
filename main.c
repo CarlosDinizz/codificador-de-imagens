@@ -3,16 +3,17 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define TAMANHO 3
+#define MAX_LINHAS 50
+#define MAX_COLUNAS 50
 #define TAMANHO_FRASE 100
 
 void escolha(char valor[], char arquivo[]);
-int** lerArquivo(char arquivo[], int* linhas, int* colunas);
-int inserirDados();
+void lerArquivo(char arquivo[]);
+void inserirDados();
 void exibirAjuda();
-bool todosIguais(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna);
-void dividir(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]);
-void colocaLetra(int** matriz, int inicioLinha, int inicioColuna, char frase[]);
+bool todosIguais(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna);
+void dividir(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]);
+void colocaLetra(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, char frase[]);
 int retornaCentro(int inicio, int final);
 
 int main(int argc, char **argv) {
@@ -33,38 +34,13 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-/* Função para teste
-int main(int argc, char **argv){
+void dividir(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]) {
 
-   // Teste
-    int matriz[5][TAMANHO];
-
-    for (int i = 0; i < 5; i++){
-        for (int j = 0; j < TAMANHO; j++){
-            scanf("%d", &matriz[i][j]);
-        }
-    }
-
-    int linha = 5;
-    int coluna = TAMANHO;
-    char frase[TAMANHO_FRASE] = "";
-
-
-    dividir(matriz, 0, 0, linha, coluna, frase);
-    printf("%s", frase);
-    
-    return 0;
-}
-*/
-
-void dividir(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]){
-
-    if (todosIguais(matriz, inicioLinha, inicioColuna, finalLinha, finalColuna)){
-        colocaLetra(matriz,inicioLinha, inicioColuna, frase);
+    if (todosIguais(matriz, inicioLinha, inicioColuna, finalLinha, finalColuna)) {
+        colocaLetra(matriz, inicioLinha, inicioColuna, frase);
         return;
     }
 
-    
     char letra[2] = "X\0";
     strcat(frase, letra);
 
@@ -74,62 +50,50 @@ void dividir(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int final
     int centroLinha = retornaCentro(inicioLinha, finalLinha);
     printf("Centro linha: %d\n", centroLinha);
 
-
-    //Quadrante 1
+    // Quadrante 1
     printf("Quadrante 1:\n");
-    for (int i = inicioLinha; i < centroLinha; i++){
-        for (int j = inicioColuna; j < centroColuna; j++){
+    for (int i = inicioLinha; i < centroLinha; i++) {
+        for (int j = inicioColuna; j < centroColuna; j++) {
             printf("%d ", matriz[i][j]);
         }
         printf("\n");
     }
     dividir(matriz, inicioLinha, inicioColuna, centroLinha, centroColuna, frase);
-    
+
+    // Quadrante 2
     printf("Quadrante 2: \n");
-    for (int i = inicioLinha; i < centroLinha; i++){
-        for (int j = centroColuna; j < finalColuna; j++){
+    for (int i = inicioLinha; i < centroLinha; i++) {
+        for (int j = centroColuna; j < finalColuna; j++) {
             printf("%d ", matriz[i][j]);
         }
         printf("\n");
     }
-    //Quadrante 2
     dividir(matriz, inicioLinha, centroColuna, centroLinha, finalColuna, frase);
 
-    if (centroLinha != finalLinha){
+    if (centroLinha != finalLinha) {
+        // Quadrante 3
         printf("Quadrante 3: \n");
-        for (int i = centroLinha; i < finalLinha; i++){
-            for (int j = inicioColuna; j < centroColuna; j++){
+        for (int i = centroLinha; i < finalLinha; i++) {
+            for (int j = inicioColuna; j < centroColuna; j++) {
                 printf("%d ", matriz[i][j]);
             }
             printf("\n");
         }
-        //Quadrante 3
         dividir(matriz, centroLinha, inicioColuna, finalLinha, centroColuna, frase);
 
+        // Quadrante 4
         printf("Quadrante 4: \n");
-        for (int i = centroLinha; i < finalLinha; i++){
-            for (int j = centroColuna; j < finalColuna; j++){
+        for (int i = centroLinha; i < finalLinha; i++) {
+            for (int j = centroColuna; j < finalColuna; j++) {
                 printf("%d ", matriz[i][j]);
             }
             printf("\n");
         }
-        //Quadrante 4
         dividir(matriz, centroLinha, centroColuna, finalLinha, finalColuna, frase);
     }
 }
 
-bool todosIguais(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna) {
-    int cor = matriz[inicioLinha][inicioColuna];
-
-    for (int i = inicioLinha; i < finalLinha; i++) {
-        for (int j = inicioColuna; j < finalColuna; j++) {
-            if (cor != matriz[i][j]) return false;
-        }
-    }
-    return true;
-}
-
-void colocaLetra(int** matriz, int inicioLinha, int inicioColuna, char frase[]) {
+void colocaLetra(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, char frase[]) {
     char letra[2];
     if (matriz[inicioLinha][inicioColuna] == 0) {
         letra[0] = 'B';
@@ -141,45 +105,48 @@ void colocaLetra(int** matriz, int inicioLinha, int inicioColuna, char frase[]) 
     strcat(frase, letra);
 }
 
-int** lerArquivo(char arquivo[], int* linhas, int* colunas) {
+void lerArquivo(char arquivo[]) {
     FILE* arquivosaida = fopen(arquivo, "r");
     if (arquivosaida == NULL) {
         printf("Erro ao abrir o arquivo.\n");
-        return NULL;
+        return;
     }
 
+    int linhas, colunas;
     char linha[100];
     fgets(linha, sizeof(linha), arquivosaida);
     do {
         if (fgets(linha, sizeof(linha), arquivosaida) == NULL) {
             fclose(arquivosaida);
-            return NULL;
+            return;
         }
     } while (linha[0] == '#');
 
-    sscanf(linha, "%d %d", colunas, linhas);
+    sscanf(linha, "%d %d", &colunas, &linhas);
 
-    int** matriz [*linhas] [*colunas];
+    int matriz[MAX_LINHAS][MAX_COLUNAS];
 
-    for (int i = 0; i < *linhas; i++) {
-        for (int j = 0; j < *colunas; j++) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
             fscanf(arquivosaida, "%d", &matriz[i][j]);
         }
     }
     fclose(arquivosaida);
 
-    printf("Matriz lida do arquivo (%dx%d):\n", *linhas, *colunas);
-    for (int i = 0; i < *linhas; i++) {
-        for (int j = 0; j < *colunas; j++) {
+    printf("Matriz lida do arquivo (%dx%d):\n", linhas, colunas);
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
             printf("%d ", matriz[i][j]);
         }
         printf("\n");
     }
 
-    return matriz;
+    char frase[TAMANHO_FRASE] = "";
+    dividir(matriz, 0, 0, linhas, colunas, frase);
+    printf("%s", frase);
 }
 
-int inserirDados() {
+void inserirDados() {
     int linhas, colunas;
 
     printf("Digite a altura: ");
@@ -187,7 +154,7 @@ int inserirDados() {
     printf("Digite a largura: ");
     scanf("%d", &colunas);
 
-    int** matriz [linhas] [colunas];
+    int matriz[MAX_LINHAS][MAX_COLUNAS];
 
     for (int i = 0; i < linhas; i++) {
         for (int j = 0; j < colunas; j++) {
@@ -203,9 +170,10 @@ int inserirDados() {
         }
         printf("\n");
     }
+
     char frase[TAMANHO_FRASE] = "";
     dividir(matriz, 0, 0, linhas, colunas, frase);
-    return 0;
+    printf("%s", frase);
 }
 
 void exibirAjuda() {
@@ -223,39 +191,34 @@ void escolha(char valor[], char arquivo[]) {
     } else if (strcmp(valor, "-m") == 0 || strcmp(valor, "--manual") == 0) {
         inserirDados();
     } else if (strcmp(valor, "-f") == 0 || strcmp(valor, "--file") == 0) {
-        int linhas, colunas;
-        int** matriz = lerArquivo(arquivo, &linhas, &colunas);
-        char frase[TAMANHO_FRASE] = "";
-        dividir(matriz, 0, 0, linhas, colunas, frase);
+        lerArquivo(arquivo);
     } else {
         exibirAjuda();
     }
 }
 
-
-bool todosIguais(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna){
+bool todosIguais(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna) {
     if (inicioColuna == finalColuna && inicioLinha == finalLinha) return true;
-    
-    int cor;
-    cor = matriz[inicioLinha][inicioColuna];
 
-    if (inicioLinha == finalLinha){
-        for (int i = inicioColuna; i < finalColuna; i++){
+    int cor = matriz[inicioLinha][inicioColuna];
+
+    if (inicioLinha == finalLinha) {
+        for (int i = inicioColuna; i < finalColuna; i++) {
             if (cor != matriz[inicioLinha][i]) return false;
         }
         return true;
     }
 
-    if (inicioColuna == finalColuna){
-        for (int i = inicioLinha; i < finalLinha; i++){
+    if (inicioColuna == finalColuna) {
+        for (int i = inicioLinha; i < finalLinha; i++) {
             if (cor != matriz[i][inicioColuna]) return false;
         }
         return true;
     }
 
-    for (int i = inicioLinha; i < finalLinha; i++){
-        for (int j = inicioColuna; j < finalColuna; j++){
-            if (cor != matriz[i][j]){
+    for (int i = inicioLinha; i < finalLinha; i++) {
+        for (int j = inicioColuna; j < finalColuna; j++) {
+            if (cor != matriz[i][j]) {
                 return false;
             }
         }
@@ -263,11 +226,10 @@ bool todosIguais(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int f
     return true;
 }
 
-
-int retornaCentro(int inicio, int final){
-    if ((inicio + final)%2 == 0){
-        return (inicio + final)/2;
+int retornaCentro(int inicio, int final) {
+    if ((inicio + final) % 2 == 0) {
+        return (inicio + final) / 2;
     }
-    return (inicio + final)/2 + 1;
-
+    return (inicio + final) / 2 + 1;
 }
+
