@@ -13,6 +13,7 @@ void exibirAjuda();
 bool todosIguais(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna);
 void dividir(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]);
 void colocaLetra(int** matriz, int inicioLinha, int inicioColuna, char frase[]);
+int retornaCentro(int inicio, int final);
 
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -32,47 +33,89 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void dividir(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]) {
-    if (todosIguais(matriz, inicioLinha, inicioColuna, finalLinha, finalColuna)) {
-        colocaLetra(matriz, inicioLinha, inicioColuna, frase);
+/* Função para teste
+int main(int argc, char **argv){
+
+   // Teste
+    int matriz[5][TAMANHO];
+
+    for (int i = 0; i < 5; i++){
+        for (int j = 0; j < TAMANHO; j++){
+            scanf("%d", &matriz[i][j]);
+        }
+    }
+
+    int linha = 5;
+    int coluna = TAMANHO;
+    char frase[TAMANHO_FRASE] = "";
+
+
+    dividir(matriz, 0, 0, linha, coluna, frase);
+    printf("%s", frase);
+    
+    return 0;
+}
+*/
+
+void dividir(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna, char frase[]){
+
+    if (todosIguais(matriz, inicioLinha, inicioColuna, finalLinha, finalColuna)){
+        colocaLetra(matriz,inicioLinha, inicioColuna, frase);
         return;
     }
 
+    
     char letra[2] = "X\0";
     strcat(frase, letra);
 
-    int divisaoInicioLinha;
-    int divisaoInicioColuna;
-    int divisaoFinalLinha;
-    int divisaoFinalColuna;
+    int centroColuna = retornaCentro(inicioColuna, finalColuna);
+    printf("Centro coluna: %d\n", centroColuna);
 
-    // Quadrante 1
-    divisaoInicioLinha = inicioLinha;
-    divisaoFinalLinha = (finalLinha % 2 == 0) ? finalLinha / 2 : finalLinha / 2 + 1;
-    divisaoInicioColuna = inicioColuna;
-    divisaoFinalColuna = (finalColuna % 2 == 0) ? finalColuna / 2 : finalColuna / 2 + 1;
-    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
+    int centroLinha = retornaCentro(inicioLinha, finalLinha);
+    printf("Centro linha: %d\n", centroLinha);
 
-    // Quadrante 2
-    divisaoInicioLinha = inicioLinha;
-    divisaoFinalLinha = (finalLinha % 2 == 0) ? finalLinha / 2 : finalLinha / 2 + 1;
-    divisaoInicioColuna = (finalColuna % 2 == 0) ? finalColuna / 2 : finalColuna / 2 + 1;
-    divisaoFinalColuna = finalColuna;
-    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
 
-    // Quadrante 3
-    divisaoInicioLinha = (finalLinha % 2 == 0) ? finalLinha / 2 : finalLinha / 2 + 1;
-    divisaoFinalLinha = finalLinha;
-    divisaoInicioColuna = inicioColuna;
-    divisaoFinalColuna = (finalColuna % 2 == 0) ? finalColuna / 2 : finalColuna / 2 + 1;
-    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
+    //Quadrante 1
+    printf("Quadrante 1:\n");
+    for (int i = inicioLinha; i < centroLinha; i++){
+        for (int j = inicioColuna; j < centroColuna; j++){
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+    dividir(matriz, inicioLinha, inicioColuna, centroLinha, centroColuna, frase);
+    
+    printf("Quadrante 2: \n");
+    for (int i = inicioLinha; i < centroLinha; i++){
+        for (int j = centroColuna; j < finalColuna; j++){
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+    //Quadrante 2
+    dividir(matriz, inicioLinha, centroColuna, centroLinha, finalColuna, frase);
 
-    // Quadrante 4
-    divisaoInicioLinha = (finalLinha % 2 == 0) ? finalLinha / 2 : finalLinha / 2 + 1;
-    divisaoFinalLinha = finalLinha;
-    divisaoInicioColuna = (finalColuna % 2 == 0) ? finalColuna / 2 : finalColuna / 2 + 1;
-    divisaoFinalColuna = finalColuna;
-    dividir(matriz, divisaoInicioLinha, divisaoInicioColuna, divisaoFinalLinha, divisaoFinalColuna, frase);
+    if (centroLinha != finalLinha){
+        printf("Quadrante 3: \n");
+        for (int i = centroLinha; i < finalLinha; i++){
+            for (int j = inicioColuna; j < centroColuna; j++){
+                printf("%d ", matriz[i][j]);
+            }
+            printf("\n");
+        }
+        //Quadrante 3
+        dividir(matriz, centroLinha, inicioColuna, finalLinha, centroColuna, frase);
+
+        printf("Quadrante 4: \n");
+        for (int i = centroLinha; i < finalLinha; i++){
+            for (int j = centroColuna; j < finalColuna; j++){
+                printf("%d ", matriz[i][j]);
+            }
+            printf("\n");
+        }
+        //Quadrante 4
+        dividir(matriz, centroLinha, centroColuna, finalLinha, finalColuna, frase);
+    }
 }
 
 bool todosIguais(int** matriz, int inicioLinha, int inicioColuna, int finalLinha, int finalColuna) {
@@ -187,4 +230,44 @@ void escolha(char valor[], char arquivo[]) {
     } else {
         exibirAjuda();
     }
+}
+
+
+bool todosIguais(int matriz[][TAMANHO], int inicioLinha, int inicioColuna, int finalLinha, int finalColuna){
+    if (inicioColuna == finalColuna && inicioLinha == finalLinha) return true;
+    
+    int cor;
+    cor = matriz[inicioLinha][inicioColuna];
+
+    if (inicioLinha == finalLinha){
+        for (int i = inicioColuna; i < finalColuna; i++){
+            if (cor != matriz[inicioLinha][i]) return false;
+        }
+        return true;
+    }
+
+    if (inicioColuna == finalColuna){
+        for (int i = inicioLinha; i < finalLinha; i++){
+            if (cor != matriz[i][inicioColuna]) return false;
+        }
+        return true;
+    }
+
+    for (int i = inicioLinha; i < finalLinha; i++){
+        for (int j = inicioColuna; j < finalColuna; j++){
+            if (cor != matriz[i][j]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+
+int retornaCentro(int inicio, int final){
+    if ((inicio + final)%2 == 0){
+        return (inicio + final)/2;
+    }
+    return (inicio + final)/2 + 1;
+
 }
