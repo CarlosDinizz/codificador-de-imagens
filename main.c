@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_LINHAS 50
-#define MAX_COLUNAS 50
+#define MAX_LINHAS 1024
+#define MAX_COLUNAS 768
 #define TAMANHO_FRASE 100
 
 // Protótipos das funções
