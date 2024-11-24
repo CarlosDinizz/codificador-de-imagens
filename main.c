@@ -7,6 +7,7 @@
 #define MAX_COLUNAS 50
 #define TAMANHO_FRASE 100
 
+// Protótipos das funções
 void escolha(char valor[], char arquivo[]);
 void lerArquivo(char arquivo[]);
 void inserirDados();
@@ -16,21 +17,29 @@ void dividir(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioCol
 void colocaLetra(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inicioColuna, char frase[]);
 int retornaCentro(int inicio, int final);
 
+// Função principal
 int main(int argc, char **argv) {
+
+    // Verifica se o número de argumentos é menor que 2 para exibir o menu de ajuda
     if (argc < 2) {
         exibirAjuda();
         return 1;
     }
 
+    // String para armazenar o argumento e o nome do arquivo
     char argumento[25];
     char nomeArquivo[25];
 
-    strcpy(argumento, argv[1]);
+    strcpy(argumento, argv[1]); 
+
+    // Copia o nome do arquivo para a variável 'nomeArquivo'
     if (argc > 2) {
         strcpy(nomeArquivo, argv[2]);
     }
 
+    // Chama a função que decidirá o que fazer com base no argumento fornecido
     escolha(argumento, nomeArquivo);
+
     return 0;
 }
 
@@ -83,7 +92,10 @@ void colocaLetra(int matriz[MAX_LINHAS][MAX_COLUNAS], int inicioLinha, int inici
     strcat(frase, letra);
 }
 
+// Função para ler o arquivo
 void lerArquivo(char arquivo[]) {
+
+    // Abre o arquivo
     FILE* arquivosaida = fopen(arquivo, "r");
     if (arquivosaida == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -92,7 +104,11 @@ void lerArquivo(char arquivo[]) {
 
     int linhas, colunas;
     char linha[100];
+
+    // Pula a primeira linha (P1)
     fgets(linha, sizeof(linha), arquivosaida);
+
+    // Ignora os comentários que começam com #
     do {
         if (fgets(linha, sizeof(linha), arquivosaida) == NULL) {
             fclose(arquivosaida);
@@ -100,10 +116,12 @@ void lerArquivo(char arquivo[]) {
         }
     } while (linha[0] == '#');
 
+    // Lê o número de linhas e colunas 
     sscanf(linha, "%d %d", &colunas, &linhas);
 
     int matriz[MAX_LINHAS][MAX_COLUNAS];
 
+    // Lê os valores do arquivo e os guarda em uma matriz
     for (int i = 0; i < linhas; i++) {
         for (int j = 0; j < colunas; j++) {
             fscanf(arquivosaida, "%d", &matriz[i][j]);
@@ -111,6 +129,7 @@ void lerArquivo(char arquivo[]) {
     }
     fclose(arquivosaida);
 
+    // Imprime a matriz lida
     printf("Matriz lida do arquivo (%dx%d):\n", linhas, colunas);
     for (int i = 0; i < linhas; i++) {
         for (int j = 0; j < colunas; j++) {
@@ -119,14 +138,17 @@ void lerArquivo(char arquivo[]) {
         printf("\n");
     }
 
+    // Chama a função de dividir e imprime o resultado
     char frase[TAMANHO_FRASE] = "";
     dividir(matriz, 0, 0, linhas, colunas, frase);
     printf("%s", frase);
 }
 
+// Função para inserir os dados manualmente
 void inserirDados() {
     int linhas, colunas;
 
+    // Pede a altura e largura da imagem para o usuário
     printf("Digite a altura: ");
     scanf("%d", &linhas);
     printf("Digite a largura: ");
@@ -134,6 +156,7 @@ void inserirDados() {
 
     int matriz[MAX_LINHAS][MAX_COLUNAS];
 
+    // Lê os valores inseridos
     for (int i = 0; i < linhas; i++) {
         for (int j = 0; j < colunas; j++) {
             printf("linha %d, coluna %d: ", i, j);
@@ -141,6 +164,7 @@ void inserirDados() {
         }
     }
 
+    // Imprime a matriz inserida
     printf("Matriz inserida (%dx%d):\n", linhas, colunas);
     for (int i = 0; i < linhas; i++) {
         for (int j = 0; j < colunas; j++) {
@@ -149,11 +173,13 @@ void inserirDados() {
         printf("\n");
     }
 
+    // Chama a função de dividir e imprime o resultado
     char frase[TAMANHO_FRASE] = "";
     dividir(matriz, 0, 0, linhas, colunas, frase);
     printf("%s", frase);
 }
 
+// Função de impressão do menu de ajuda
 void exibirAjuda() {
     printf("Uso: ImageEncoder [-? | -m | -f ARQ]\n");
     printf("Codifica imagens binarias dadas em arquivos PBM ou dados informados manualmente.\n");
@@ -163,6 +189,7 @@ void exibirAjuda() {
     printf("  -f, --file ARQ: Le a imagem representada no arquivo PBM (Portable Bitmap).\n");
 }
 
+// Função da escolha do menu para: ajuda, inserir a imagem manualmente ou ler arquivo
 void escolha(char valor[], char arquivo[]) {
     if (strcmp(valor, "-?") == 0 || strcmp(valor, "--help") == 0) {
         exibirAjuda();
@@ -212,4 +239,3 @@ int retornaCentro(int inicio, int final) {
     }
     return (inicio + final) / 2 + 1;
 }
-
